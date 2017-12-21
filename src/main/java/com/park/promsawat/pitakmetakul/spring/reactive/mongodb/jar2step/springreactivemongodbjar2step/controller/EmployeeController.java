@@ -37,6 +37,7 @@ public class EmployeeController {
         return employeeRepository.findById(id);
     }
 
+    //produces = .... Using for steam data gradually all time not just one object
     @GetMapping(value = "/{id}/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<EmployeeEvent> getEvents(@PathVariable("id") final String empId) {
         return employeeRepository.findById(empId)
@@ -53,6 +54,8 @@ public class EmployeeController {
 
                     return Flux.zip(interval, employeeEventFlux)
                             .map(Tuple2::getT2);
+
                 });
+
     }
 }

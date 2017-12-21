@@ -1,9 +1,12 @@
 package com.park.promsawat.pitakmetakul.spring.reactive.mongodb.jar2step.springreactivemongodbjar2step.model;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
 public class Employee {
+
+    @Id
     private String id;
     private String name;
     private Long salary;
