@@ -39,8 +39,8 @@ public class EmployeeController {
 
     //produces = .... Using for steam data gradually all time not just one object
     @GetMapping(value = "/{id}/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<EmployeeEvent> getEvents(@PathVariable("id") final String empId) {
-        return employeeRepository.findById(empId)
+    public Flux<EmployeeEvent> getEvents(@PathVariable("id") final String id) {
+        return employeeRepository.findById(id)
                 .flatMapMany(employee -> {
 
                     Flux<Long> interval = Flux.interval(Duration.ofSeconds(2));
@@ -51,11 +51,21 @@ public class EmployeeController {
                                             new Date()))
                             );
 
-
                     return Flux.zip(interval, employeeEventFlux)
                             .map(Tuple2::getT2);
-
                 });
+    }
 
+    // return json by define second by user
+    @GetMapping(value = "/{id}/events/{sec}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<EmployeeEvent> getEventSec(@PathVariable("id") final String id, @PathVariable("sec") final int sec) {
+        return employeeRepository.findById(id)
+                .flatMapMany(employee -> {
+                    Flux<Long> interval = Flux.interval(Duration.ofSeconds(sec));
+                    Flux<EmployeeEvent> employeeEventFlux =
+                            Flux.fromStream(Stream.generate(() -> new EmployeeEvent(employee, new Date())));
+                    return Flux.zip(interval, employeeEventFlux)
+                            .map(Tuple2::getT2);
+                });
     }
 }
